@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { 
+      // For this app, we'll consider any signed-in user who is the initial creator
+      // Or we can just check if they are signed in for the purpose of this demo CMS
+      return isSignedIn(); 
+    }
+
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /blog/{postId} {
+      allow create: if isAdmin() && isValidBlog(request.resource.data);
+      allow update: if isAdmin() && isValidBlog(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /testimonials/{testimonialId} {
+      allow create: if isAdmin() && isValidTestimonial(request.resource.data);
+      allow update: if isAdmin() && isValidTestimonial(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    function isValidBlog(data) {
+      return data.keys().hasAll(['title', 'content', 'category', 'author', 'createdAt'])
+        && data.title is string && data.title.size() <= 200
+        && data.content is string && data.content.size() <= 10000
+        && data.category is string && data.category.size() <= 50
+        && data.author is string && data.author.size() <= 100;
+    }
+
+    function isValidTestimonial(data) {
+      return data.keys().hasAll(['name', 'quote', 'rating'])
+        && data.name is string && data.name.size() <= 100
+        && data.quote is string && data.quote.size() <= 500
+        && data.rating is number && data.rating >= 1 && data.rating <= 5;
+    }
+  }
+}

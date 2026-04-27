@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "Blog": {
+      "title": "Blog Post",
+      "description": "A blog post entity",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" },
+        "author": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "category", "author", "createdAt"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "User testimonial",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "quote": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "rating": { "type": "number" }
+      },
+      "required": ["name", "quote", "rating"]
+    }
+  },
+  "firestore": {
+    "blog": {
+      "schema": "Blog",
+      "description": "Collection of blog posts"
+    },
+    "testimonials": {
+      "schema": "Testimonial",
+      "description": "Collection of testimonials"
+    }
+  }
+}
